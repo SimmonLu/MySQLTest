@@ -11,6 +11,8 @@ public class MySQL {
     private String dbUrl = "jdbc:mysql://127.0.0.1:[port]/[database]";
     private String dbUser = "root";
     private String dbPass = "";
+
+
     public Connection getConn() {
         Connection conn = null;
         try {
@@ -59,7 +61,7 @@ public class MySQL {
     }
 
     public String select() {
-        String sql = "select * from ？ where (column name) = (value)";
+        String sql = "select * from ? where (column name) = (value)";
         Connection conn = getConn();
 
         try {

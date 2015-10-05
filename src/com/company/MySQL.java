@@ -8,9 +8,14 @@ import java.sql.*;
 public class MySQL {
 
     private String dbDriver = "com.mysql.jdbc.Driver";
-    private String dbUrl = "jdbc:mysql://127.0.0.1:[port]/[database]";
+    private String dbUrl = "jdbc:mysql://";
+
     private String dbUser = "root";
     private String dbPass = "";
+
+    public MySQL(String ip, String port, String db) {
+        this.dbUrl = this.dbUrl + ip + ":" + port + "/" + db;
+    }
 
 
     public Connection getConn() {
@@ -34,22 +39,22 @@ public class MySQL {
         return conn;
     }
 
-    public int insert() {
+    public int insert(String table, String[] columns, String[] values) {
         int i = 0;
-        String sql = "insert into ? (?,?) values(?,?)";
+        String sql = "insert into '" + table + "'(?,?) values (?,?)";
+
         Connection conn = getConn();
 
 
         try {
             PreparedStatement preStmt = conn.prepareStatement(sql);
-            //table name
-            preStmt.setString(1,"");
-            //column name
-            preStmt.setString(2, "");
-            preStmt.setString(3, "");
-            //value
-            preStmt.setString(4, "");
-            preStmt.setString(5, "");
+            //column names
+            preStmt.setString(1, columns[0]);
+            preStmt.setString(2, columns[1]);
+            //values
+            preStmt.setString(3, values[0]);
+            preStmt.setString(4, values[1]);
+
             i = preStmt.executeUpdate();
         }
 
@@ -60,13 +65,15 @@ public class MySQL {
         return i;
     }
 
-    public String select() {
-        String sql = "select * from ? where (column name) = (value)";
+    public String select(String table, String column, String value) {
+        String sql = "select * from " + table + " where ? = ?";
         Connection conn = getConn();
 
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            PreparedStatement prestmt = conn.prepareStatement(sql);
+            prestmt.setString(1, column);
+            prestmt.setString(2, value);
+            ResultSet rs = prestmt.executeQuery();
 
             if(rs.next()) {
                 int m1 = rs.getInt(1);
